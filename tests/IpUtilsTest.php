@@ -28,6 +28,8 @@ class IpUtilsTest extends TestCase {
 			[ true, '1.2.3.4', '192.168.1.0/0' ],
 			[ false, '1.2.3.4', '256.256.256/0' ], // invalid CIDR notation
 			[ false, 'an_invalid_ip', '192.168.1.0/24' ],
+			[ true, '1.1.1.1', '1.1.1.1-10' ],
+			[ true, '1.1.1.1', ['1.1.1.3', '1.1.1.1-255'] ],
 		];
 	}
 
@@ -161,6 +163,30 @@ class IpUtilsTest extends TestCase {
 			[ true, '127.0.0.1/24' ],
 			[ true, '2a01:198:603:0::/65' ],
 		];
+	}
+
+	/**
+	 * @dataProvider validRangeData
+	 */
+	public function testValidRange( $match, $ip ) {
+		$this->assertEquals( $match, IpUtils::validIpRange( $ip ) );
+	}
+
+	public function validRangeData() {
+		return [
+			[ false, '1.1.1.1' ],
+			[ true, '127.0.0.1-22' ],
+			[ false, '1.1.1.10-1' ],
+			[ true, '1.1.1.10-10' ],
+		];
+	}
+
+	public function testRangeIps() {
+		$range = "1.1.1.1-2";
+
+		$ips = IpUtils::getIpsRange( $range );
+
+		var_dump( $ips );
 	}
 
 }

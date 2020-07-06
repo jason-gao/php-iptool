@@ -58,6 +58,10 @@ class IpUtils {
 			return self::$checkedIps[ $cacheKey ] = false;
 		}
 
+		if ( self::validIpRange( $ip ) ) {
+			return self::ipInRange( $requestIp, $ip );
+		}
+
 		if ( false !== strpos( $ip, '/' ) ) {
 			list( $address, $netmask ) = explode( '/', $ip, 2 );
 
@@ -225,6 +229,85 @@ class IpUtils {
 		}
 
 		return $ips;
+	}
+
+
+	/**
+	 * @param $ipRange 1.1.1.1-10
+	 * @param string $separate
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 */
+	public static function validIpRange( $ipRange, $separate = '-' ) {
+		$match = preg_match( '/^\d+\.\d+\.\d+\.\d+' . $separate . '\d+$/', $ipRange );
+		if ( ! $match ) {
+			return false;
+		}
+		list( $pre, $end ) = explode( $separate, $ipRange );
+		if ( $end > 255 ) {
+			return false;
+		}
+		if ( ! self::validIp( $pre ) ) {
+			return false;
+		}
+		list( $a, $b, $c, $d ) = explode( '.', $pre );
+
+		if ( $end < $d ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param $ipRange 1.1.1.1-10  1.1.1.1,1.1.1.2
+	 * @param string $separate
+	 *
+	 * @return array|bool|string
+	 * @throws \Exception
+	 */
+	public static function getIpsRange( $ipRange, $separate = '-' ) {
+		if ( ! self::validIpRange( $ipRange ) ) {
+			return false;
+		}
+
+		$ips = [];
+		list( $pre, $end ) = explode( $separate, $ipRange );
+		list( $a, $b, $c, $d ) = explode( '.', $pre );
+
+		if ( $end == $d ) {
+			return "$a.$b.$c.$d";
+		}
+
+		for ( $i = $d; $i <= $end; $i ++ ) {
+			$ip    = "$a.$b.$c.$i";
+			$ips[] = $ip;
+		}
+
+		return $ips;
+	}
+
+
+	public static function ipInRange( $ip, $ipRange, $separate = '-' ) {
+		if ( ! self::validIpRange( $ipRange ) ) {
+			return false;
+		}
+
+		$ip = (float) sprintf( '%u', ip2long( $ip ) );
+
+		list( $pre, $end ) = explode( $separate, $ipRange );
+		list( $a, $b, $c, $d ) = explode( '.', $pre );
+
+		$begin = (float) sprintf( '%u', ip2long( trim( "$a.$b.$c.$d" ) ) );
+		$end   = (float) sprintf( '%u', ip2long( trim( "$a.$b.$c.$end" ) ) );
+
+
+		if ( $ip >= $begin && $ip <= $end ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
