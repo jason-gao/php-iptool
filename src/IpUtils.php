@@ -240,8 +240,7 @@ class IpUtils {
 	 * @throws \Exception
 	 */
 	public static function validIpRange( $ipRange, $separate = '-' ) {
-		$match = preg_match( '/^\d+\.\d+\.\d+\.\d+' . $separate . '\d+$/', $ipRange );
-		if ( ! $match ) {
+		if ( ! self::isIpRange($ipRange, $separate) ) {
 			return false;
 		}
 		list( $pre, $end ) = explode( $separate, $ipRange );
@@ -258,6 +257,12 @@ class IpUtils {
 		}
 
 		return true;
+	}
+
+	public static function isIpRange($ipRange, $separate = '-' ){
+		$match = preg_match( '/^\d+\.\d+\.\d+\.\d+' . $separate . '\d+$/', $ipRange );
+
+		return $match;
 	}
 
 	/**
