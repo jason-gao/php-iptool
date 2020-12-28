@@ -191,4 +191,44 @@ class IpUtilsTest extends TestCase {
 		var_dump( $ips );
 	}
 
+	/**
+	 * @param $match
+	 * @param $ip
+	 *
+	 * @throws \Exception
+	 * @dataProvider ipv4Data
+	 */
+	public function testValidIpv4( $match, $ip ) {
+		$this->assertEquals( $match, IpUtils::validIpv4( $ip ) );
+	}
+
+	public function ipv4Data() {
+		return [
+			[ true, '127.0.0.1' ],
+			[ true, '255.255.255.0' ],
+			[ false, '2001::' ],
+			[ false, '11' ],
+		];
+	}
+
+	/**
+	 * @param $match
+	 * @param $ip
+	 *
+	 * @throws \Exception
+	 * @dataProvider ipv6Data
+	 */
+	public function testValidIpv6( $match, $ip ) {
+		$this->assertEquals( $match, IpUtils::validIpv6( $ip ) );
+	}
+
+	public function ipv6Data() {
+		return [
+			[ false, '127.0.0.1' ],
+			[ false, '255.255.255.0' ],
+			[ true, '2001::' ],
+			[ false, '11' ],
+		];
+	}
+
 }
