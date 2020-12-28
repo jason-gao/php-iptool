@@ -29,7 +29,7 @@ class IpUtilsTest extends TestCase {
 			[ false, '1.2.3.4', '256.256.256/0' ], // invalid CIDR notation
 			[ false, 'an_invalid_ip', '192.168.1.0/24' ],
 			[ true, '1.1.1.1', '1.1.1.1-10' ],
-			[ true, '1.1.1.1', ['1.1.1.3', '1.1.1.1-255'] ],
+			[ true, '1.1.1.1', [ '1.1.1.3', '1.1.1.1-255' ] ],
 		];
 	}
 
@@ -162,6 +162,8 @@ class IpUtilsTest extends TestCase {
 			[ false, '127.0.0.1' ],
 			[ true, '127.0.0.1/24' ],
 			[ true, '2a01:198:603:0::/65' ],
+			[ true, '210.13.52.67/32' ],
+			[ true, '210.13.52.67/26' ],
 		];
 	}
 

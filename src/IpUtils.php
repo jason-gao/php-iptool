@@ -214,6 +214,35 @@ class IpUtils {
 		return false;
 	}
 
+	/**
+	 * @param $ip
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 * ipv4地址检测
+	 */
+	public static function validIpv4( $ip ) {
+		if ( self::getIpVersion( $ip ) == 4 ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param $ip
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 * ipv6地址检测
+	 */
+	public static function validIpv6( $ip ) {
+		if ( self::getIpVersion( $ip ) == 6 ) {
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * @param $cidr
@@ -240,7 +269,7 @@ class IpUtils {
 	 * @throws \Exception
 	 */
 	public static function validIpRange( $ipRange, $separate = '-' ) {
-		if ( ! self::isIpRange($ipRange, $separate) ) {
+		if ( ! self::isIpRange( $ipRange, $separate ) ) {
 			return false;
 		}
 		list( $pre, $end ) = explode( $separate, $ipRange );
@@ -259,7 +288,7 @@ class IpUtils {
 		return true;
 	}
 
-	public static function isIpRange($ipRange, $separate = '-' ){
+	public static function isIpRange( $ipRange, $separate = '-' ) {
 		$match = preg_match( '/^\d+\.\d+\.\d+\.\d+' . $separate . '\d+$/', $ipRange );
 
 		return $match;
